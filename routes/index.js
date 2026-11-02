@@ -1,24 +1,29 @@
 const router = require("express").Router();
 
 router.get("/", async (req, res) => {
-  let albums = await getAlbums();
   let albumList = [];
 
-  albumObj = albums.albums.items;
-  for (let obj of albumObj) {
-    albumList.push({
-      name: obj.name,
-      type: obj.album_type,
-      artist: obj.artists[0].name,
-      release_date: obj.release_date,
-      image: obj.images[0].url,
-      spotify_link: obj.external_urls.spotify,
-      total_tracks: obj.total_tracks
-    });
+  try {
+    let albums = await getAlbums();
+
+    albumObj = albums.albums.items;
+    for (let obj of albumObj) {
+      albumList.push({
+        name: obj.name,
+        type: obj.album_type,
+        artist: obj.artists[0].name,
+        release_date: obj.release_date,
+        image: obj.images[0].url,
+        spotify_link: obj.external_urls.spotify,
+        total_tracks: obj.total_tracks
+      });
+    }
+  } catch (err) {
+    console.log(err);
   }
+
   res.render("index", { albumList });
 });
-
 
 async function getAlbums() {
   var clientId = process.env.CLIENT_ID; // Your client id

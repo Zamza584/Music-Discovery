@@ -5,10 +5,14 @@ const jwt = require("jsonwebtoken");
 const albumSchema = require("../models/albumSchema");
 let offset = 0;
 
-router.get("/:year/:next?/:previous?", async (req, res) => {
+router.get("/:year{.:next}{.:previous}", async (req, res) => {
   /*#swagger.tags = ['Albums']
     #swagger.summary = "get album list by year" */
   let selectedYear = req.params.year;
+  if (!selectedYear) {
+    throw new Error("no selected year");
+  }
+
   let p = req.params;
 
   //to get token
@@ -84,7 +88,7 @@ router.post("/saveAlbum", async (req, res) => {
        schema: { $ref: "#/definitions/albumData" } 
 
   } */
-    
+
   const token = req.cookies.token;
   console.log(token);
   const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -101,8 +105,6 @@ router.post("/saveAlbum", async (req, res) => {
 });
 
 //used in index and the starting route to get all the albums
-router.get("/", async (req, res) => {
-  
-});
+router.get("/", async (req, res) => {});
 
 module.exports = router;
